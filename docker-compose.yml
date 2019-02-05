@@ -1,0 +1,23 @@
+version: "3.3"
+
+services:
+  nginx:
+    image: ${COMPOSE_DOCKER_IMAGE}
+    deploy:
+      replicas: 2
+      labels:
+        com.docker.lb.default_backend: "true"
+        com.docker.lb.port: 80
+        com.docker.ucp.access.label: "/Infrastructure"
+      placement:
+        constraints:
+          - 'node.labels.nodetype==infra'
+          - 'node.labels.com.docker.ucp.collection.system!=true'
+          - 'node.labels.com.docker.ucp.collection.swarm==true'
+          - 'node.labels.com.docker.ucp.orchestrator.swarm==true'
+    networks:
+      - ingress
+
+networks:
+  ingress:
+    driver: overlay
